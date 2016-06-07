@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sokoban", "VRLabyrinth\Sokoban.csproj", "{208347A3-5E59-4BEE-ADE1-017EA0CD21A0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AB217266-BF5A-4A5A-8DBA-5280E4AD17D4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{208347A3-5E59-4BEE-ADE1-017EA0CD21A0}.Debug|x86.ActiveCfg = Debug|x86
+		{208347A3-5E59-4BEE-ADE1-017EA0CD21A0}.Debug|x86.Build.0 = Debug|x86
+		{208347A3-5E59-4BEE-ADE1-017EA0CD21A0}.Release|x86.ActiveCfg = Release|x86
+		{208347A3-5E59-4BEE-ADE1-017EA0CD21A0}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
