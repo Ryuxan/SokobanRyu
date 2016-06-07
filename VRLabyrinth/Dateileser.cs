@@ -25,8 +25,9 @@ namespace VRLabyrinth
         {
             String strMap;
 
-            strMap = File.ReadAllText("M:\\VRSammel\\OcculusLabyrinth\\OcculusLabyrinth\\VRLabyrinth\\VRLabyrinth\\test.txt");
+            //strMap = File.ReadAllText("M:\\VRSammel\\OcculusLabyrinth\\OcculusLabyrinth\\VRLabyrinth\\VRLabyrinth\\test.txt");
             //strMap = File.ReadAllText(VRLabyrinth.Properties.Resources.test);
+            strMap = Properties.Resources.test;
 
             return strMap;
             //Console.WriteLine(strMap);
@@ -37,8 +38,8 @@ namespace VRLabyrinth
             String strMap;
 
             //            strMap = File.ReadAllText("M:\\VRSammel\\OcculusLabyrinth\\OcculusLabyrinth\\VRLabyrinth\\VRLabyrinth\\strMap.txt");
-            strMap = File.ReadAllText(VRLabyrinth.Properties.Resources.test);
-
+            //strMap = File.ReadAllText(VRLabyrinth.Properties.Resources.test);
+            strMap = Properties.Resources.test;
             return strMap;
             //Console.WriteLine(strMap);
         }
