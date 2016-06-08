@@ -113,6 +113,7 @@ namespace VRLabyrinth
             //myBuffer.Render();
         }
 
+        #region Zeichne-3D
         /*private void zeichne_3D()
         {
             String Text;
@@ -156,7 +157,7 @@ namespace VRLabyrinth
                 }
             }
         }*/
-           
+        #endregion
 
         protected override void OnPaint (PaintEventArgs e)
         {
