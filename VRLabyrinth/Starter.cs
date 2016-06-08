@@ -11,10 +11,13 @@ namespace VRLabyrinth
     {
         public static void Main(String[] args)
         {
-            //do anything
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new playground());            
+            Playground p = new Playground();
+            //do anything
+            p.BringToFront();
+            p.Focus();
+            Application.Run(p);            
         }
     }
 }

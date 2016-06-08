@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using VRLabyrinth.Properties;
@@ -11,13 +10,14 @@ using VRLabyrinth.Properties;
 
 namespace VRLabyrinth
 {
-    public partial class playground : Form
+    public partial class Playground : Form
     {
 
         Dateileser datain;
         BufferedGraphics myBuffer;
         BufferedGraphicsContext currentContext;
-        public playground()
+        Timer timer1;
+        public Playground()
         {
             InitializeComponent();
             zeichne();
@@ -35,6 +35,11 @@ namespace VRLabyrinth
             datain = new Dateileser();
             Size si = new Size(16, 16);
             currentContext = BufferedGraphicsManager.Current;
+            myBuffer = currentContext.Allocate(this.CreateGraphics(), this.DisplayRectangle);
+            //timer1 = new Timer();
+            //timer1.Interval = 30;
+            ////timer1.AutoReset = true;
+            //timer1.Tick += new EventHandler(this.OnTimer);
 
             //Player karte = new Player("M:\\VRSammel\\OcculusLabyrinth\\OcculusLabyrinth\\VRLabyrinth\\VRLabyrinth\\Resources\\hintergrund.bmp");
             Bitmap karte = new Bitmap(Resources.hintergrund);            
@@ -66,8 +71,10 @@ namespace VRLabyrinth
                         FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
                     else if (lines[y][x] == '#')
                         FieldMap_2D[y, x] = new Block(si, karte, 50 + x * 16, 50 + y * 16);
-                    else if (lines[y][x] == 'Z')
+                    else if (lines[y][x] == 'Z'){
                         FieldMap_2D[y, x] = new Target(si, karte, 50 + x * 16, 50 + y * 16);
+                        anzTargets++;
+                    }
                     else if (lines[y][x] == 'K')
                     {
                         FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
@@ -83,8 +90,27 @@ namespace VRLabyrinth
                     }
                     else if (lines[y][x] == '-')
                         FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
-                }                
+                }
             }
+            threadTargetStarter();
+            //timer1.Start();
+        }
+
+        private void OnTimer(object sender, EventArgs e)
+        {
+            //myBuffer = currentContext.Allocate(this.CreateGraphics(), this.DisplayRectangle);
+            //foreach (Feld field in FieldMap_2D)
+            //{
+            //    myBuffer.Graphics.DrawImage(field.getBMap(), field.getStartPoint());
+            //}
+
+            //foreach (Kiste obj in holder)
+            //{
+            //    myBuffer.Graphics.DrawImage(obj.getBMap(), obj.getStartPoint());
+            //}
+
+            //myBuffer.Graphics.DrawImage(spieler.getBMap(), spieler.getActPoint());
+            //myBuffer.Render();
         }
 
         /*private void zeichne_3D()
@@ -135,8 +161,8 @@ namespace VRLabyrinth
         protected override void OnPaint (PaintEventArgs e)
         {
             //base.OnPaint(e);
-   
-            myBuffer = currentContext.Allocate(this.CreateGraphics(), this.DisplayRectangle);
+
+            
             foreach (Feld field in FieldMap_2D)
             {
                 myBuffer.Graphics.DrawImage(field.getBMap(), field.getStartPoint());
@@ -146,9 +172,9 @@ namespace VRLabyrinth
             {
                 myBuffer.Graphics.DrawImage(obj.getBMap(), obj.getStartPoint());
             }
-            
+
             myBuffer.Graphics.DrawImage(spieler.getBMap(), spieler.getActPoint());
-            myBuffer.Render();           
+            myBuffer.Render();            
         }
 
         private void playground_KeyDown(object sender, KeyEventArgs e)
@@ -306,5 +332,43 @@ namespace VRLabyrinth
                 return true;
             return false;
         }
-    }
+
+        private void threadTargetStarter()
+        {
+            System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ThreadStart(targetErreicht));
+
+            t.Name = "ZielPruefung";
+            t.Start();
+        }
+
+        private int anzTargets = 0;
+        
+        private void targetErreicht()
+        {
+            bool zielnichterreicht = true;
+            do
+            {
+                int goalsArrived = anzTargets;
+                foreach (Kiste k in holder)
+                {
+                    Feld testield = FieldMap_2D[k.getAlternatePoint().Y, k.getAlternatePoint().X];
+                    if (FieldMap_2D[k.getAlternatePoint().Y, k.getAlternatePoint().X].GetType().Name == "Target")
+                        goalsArrived--;
+                    //k.getAlternatePoint()
+                }
+                if (goalsArrived == 0)
+                {
+                    MessageBox.Show("Gewonnen", "Winning", MessageBoxButtons.OK);
+                    zielnichterreicht = false; 
+                }
+            }
+            while (zielnichterreicht);
+            //globale goals arrived
+            //anfang bei 0 mit jedem target field +1
+            //ist auf dem feld der kiste ein target feld setze globale -1
+            //immer zur laufzeit überprüfen
+            //wenn cahce wert 0 erreicht sind alle ziele mit kiste belegt dann fertig
+            //im eigenen thread daher eigene classe?
+        }
+    }  
 }

@@ -1,6 +1,6 @@
 ﻿namespace VRLabyrinth
 {
-    partial class playground
+    partial class Playground
     {
         /// <summary>
         /// Erforderliche Designervariable.

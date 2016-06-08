@@ -95,10 +95,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Maps\test.txt" />
     <Content Include="Resources\hintergrund.bmp" />
     <None Include="Resources\player.png" />
     <None Include="Resources\testpng.bmp" />
     <None Include="Resources\testipng.png.bmp" />
+    <Content Include="Resources\test.txt" />
     <Content Include="test.txt" />
   </ItemGroup>
   <ItemGroup>
