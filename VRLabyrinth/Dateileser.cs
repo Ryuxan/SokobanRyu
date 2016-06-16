@@ -22,7 +22,9 @@ namespace VRLabyrinth
             String strMap;
             string path;
             //Later Random File in the Map Directory or Browse
-            string RandomMap = "test.txt";
+            string RandomMap = "Map1.txt";
+            //string RandomMap = "Map2.txt";
+            //string RandomMap = "Map3.txt";
             path = Path.GetDirectoryName(System.Reflection.Assembly.GetAssembly(base.GetType()).Location) +"\\Maps";
 
             if (Directory.CreateDirectory(path).Exists)

@@ -20,6 +20,9 @@ namespace VRLabyrinth
         public Playground()
         {
             InitializeComponent();
+            timer1 = new Timer();
+            timer1.Interval = 10;            
+            timer1.Tick += new EventHandler(this.OnTimer);
             zeichne();
             //zeichne_3D();
         }
@@ -36,10 +39,6 @@ namespace VRLabyrinth
             Size si = new Size(16, 16);
             currentContext = BufferedGraphicsManager.Current;
             myBuffer = currentContext.Allocate(this.CreateGraphics(), this.DisplayRectangle);
-            //timer1 = new Timer();
-            //timer1.Interval = 30;
-            ////timer1.AutoReset = true;
-            //timer1.Tick += new EventHandler(this.OnTimer);
 
             //Player karte = new Player("M:\\VRSammel\\OcculusLabyrinth\\OcculusLabyrinth\\VRLabyrinth\\VRLabyrinth\\Resources\\hintergrund.bmp");
             Bitmap karte = new Bitmap(Resources.hintergrund);            
@@ -54,10 +53,9 @@ namespace VRLabyrinth
                 if (line.Length - 1 > RowLengh)
                     RowLengh = line.Length - 1;
             }
-            
-            //testbereich holder
-            int i = 0;
-            holder = new object[6];
+                                                
+            //List As Cache for the Object Holder here for the Kist
+            List<Kiste> cacheKisteList = new List<Kiste>();
 
             FieldMap_2D = new Feld[numLines, RowLengh];
             for (int y = 0; y < numLines; ++y)
@@ -78,39 +76,37 @@ namespace VRLabyrinth
                     else if (lines[y][x] == 'K')
                     {
                         FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
-                        //FieldMap_2D[y, x] = new Kiste(si, karte, 50 + x * 16, 50 + y * 16);
-                        holder[i++] = new Kiste(si, karte, 50 + x * 16, 50 + y * 16, x, y);
+                        cacheKisteList.Add(new Kiste(si, karte, 50 + x * 16, 50 + y * 16, x, y));
                     }
                     else if (lines[y][x] == 'B')
                     {
                         FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
                         spieler = new Player(x, y);
-                        
-                        //holder[i++] = new Kiste(si, karte, 50 + x * 16, 50 + y * 16, x, y);
                     }
                     else if (lines[y][x] == '-')
                         FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
                 }
-            }
+            }            
+            holder = cacheKisteList.ToArray();
             threadTargetStarter();
-            //timer1.Start();
+            timer1.Start();
         }
 
         private void OnTimer(object sender, EventArgs e)
         {
-            //myBuffer = currentContext.Allocate(this.CreateGraphics(), this.DisplayRectangle);
-            //foreach (Feld field in FieldMap_2D)
-            //{
-            //    myBuffer.Graphics.DrawImage(field.getBMap(), field.getStartPoint());
-            //}
+            myBuffer = currentContext.Allocate(this.CreateGraphics(), this.DisplayRectangle);
+            foreach (Feld field in FieldMap_2D)
+            {
+                myBuffer.Graphics.DrawImage(field.getBMap(), field.getStartPoint());
+            }
 
-            //foreach (Kiste obj in holder)
-            //{
-            //    myBuffer.Graphics.DrawImage(obj.getBMap(), obj.getStartPoint());
-            //}
+            foreach (Kiste obj in holder)
+            {
+                myBuffer.Graphics.DrawImage(obj.getBMap(), obj.getStartPoint());
+            }
 
-            //myBuffer.Graphics.DrawImage(spieler.getBMap(), spieler.getActPoint());
-            //myBuffer.Render();
+            myBuffer.Graphics.DrawImage(spieler.getBMap(), spieler.getActPoint());
+            myBuffer.Render();
         }
 
         #region Zeichne-3D
@@ -163,7 +159,6 @@ namespace VRLabyrinth
         {
             //base.OnPaint(e);
 
-            
             foreach (Feld field in FieldMap_2D)
             {
                 myBuffer.Graphics.DrawImage(field.getBMap(), field.getStartPoint());
@@ -175,14 +170,11 @@ namespace VRLabyrinth
             }
 
             myBuffer.Graphics.DrawImage(spieler.getBMap(), spieler.getActPoint());
-            myBuffer.Render();            
+            myBuffer.Render();
         }
 
         private void playground_KeyDown(object sender, KeyEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine(e.KeyValue);
-            //Kiste kistHold;
-            //kistHold = (Kiste)holder[0];
+        {            
             switch (e.KeyCode)
             {
                 case Keys.W:
@@ -370,6 +362,13 @@ namespace VRLabyrinth
             //immer zur laufzeit überprüfen
             //wenn cahce wert 0 erreicht sind alle ziele mit kiste belegt dann fertig
             //im eigenen thread daher eigene classe?
+        }
+
+        private void Playground_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //Todo Kill All Objects that will not use
+            //Application.Exit()
+            Environment.Exit(0);
         }
     }  
 }

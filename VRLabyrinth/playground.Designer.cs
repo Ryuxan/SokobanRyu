@@ -30,14 +30,15 @@
         {
             this.SuspendLayout();
             // 
-            // playground
+            // Playground
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(496, 418);
-            this.Name = "playground";
+            this.Name = "Playground";
             this.Text = "playground";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Playground_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.playground_KeyDown);
             this.ResumeLayout(false);
 

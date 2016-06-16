@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dateileser.cs" />
+    <Compile Include="Engine.cs" />
     <Compile Include="Feld.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="playground.cs">
@@ -99,7 +100,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Maps\test.txt" />
+    <Content Include="Maps\Map3.txt" />
+    <Content Include="Maps\Map2.txt" />
+    <Content Include="Maps\Map1.txt" />
     <Content Include="Resources\hintergrund.bmp" />
     <None Include="Resources\player.png" />
     <None Include="Resources\testpng.bmp" />
