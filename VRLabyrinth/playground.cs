@@ -26,6 +26,11 @@ namespace VRLabyrinth
             zeichne();
             //zeichne_3D();
         }
+
+        public Playground(ref object[] holder)
+        {
+            this.holder = holder;
+        }
                         
         Feld[,] FieldMap_2D;
         //Feld[, ,] FieldMap_3D;
