@@ -34,6 +34,7 @@ namespace VRLabyrinth
         }
 
         public abstract Point getStartPoint();
+        public abstract Point getAlternatePoint();        
 
         public abstract Bitmap getBMap();  
 
@@ -59,6 +60,11 @@ namespace VRLabyrinth
         public override Point getStartPoint()
         {
             return start;
+        }
+
+        public override Point getAlternatePoint()
+        {
+            return new Point(-1, -1);
         }
 
         public override Bitmap getBMap()
@@ -98,6 +104,11 @@ namespace VRLabyrinth
             return start;
         }
 
+        public override Point getAlternatePoint()
+        {
+            return new Point(-1, -1);
+        }
+
         public override Bitmap getBMap()
         {
             return bmap;
@@ -132,6 +143,11 @@ namespace VRLabyrinth
         public override Point getStartPoint()
         {
             return start;
+        }
+
+        public override Point getAlternatePoint()
+        {
+            return new Point(-1, -1);
         }
 
         public override Bitmap getBMap()
@@ -216,7 +232,7 @@ namespace VRLabyrinth
             return start;
         }
 
-        public Point getAlternatePoint()
+        public override Point getAlternatePoint()
         {
             return new Point(arrayX, arrayY);
         }

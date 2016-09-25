@@ -14,7 +14,7 @@ namespace VRLabyrinth
         }
                 
         /// <summary>
-        /// Read a Random File in the Standart Maps Directory
+        /// Read a random Map file in the standard Mapsdirectory
         /// </summary>
         /// <returns>Map in String Form</returns>
         public String leseein()
@@ -22,14 +22,18 @@ namespace VRLabyrinth
             String strMap;
             string path;
             //Later Random File in the Map Directory or Browse
-            string RandomMap = "Map1.txt";
-            //string RandomMap = "Map2.txt";
-            //string RandomMap = "Map3.txt";
-            path = Path.GetDirectoryName(System.Reflection.Assembly.GetAssembly(base.GetType()).Location) +"\\Maps";
+            string RandomMap; // = "Map2.txt";
+            string[] Maps;
+            Random rnd = new Random(DateTime.Now.Millisecond);
+            path = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location) +"\\Maps";
+            Maps = Directory.GetFiles(path, "Map*");
+
+            RandomMap = Maps[rnd.Next(Maps.Length)];
 
             if (Directory.CreateDirectory(path).Exists)
             {
-                strMap = File.ReadAllText(path +"\\"+ RandomMap);
+                //strMap = File.ReadAllText(path +"\\"+ RandomMap);
+                strMap = File.ReadAllText(RandomMap);
                 return strMap;
             }            
             return null;
@@ -44,8 +48,8 @@ namespace VRLabyrinth
         {
             String strMap;
             String path;
-                        
-            path = Path.GetDirectoryName(System.Reflection.Assembly.GetAssembly(base.GetType()).Location) + "\\Maps";
+
+            path = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location) + "\\Maps";
 
             strMap = File.ReadAllText(path + "\\" + FileName);
             return strMap;           

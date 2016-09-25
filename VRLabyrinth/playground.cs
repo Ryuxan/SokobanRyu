@@ -17,36 +17,62 @@ namespace VRLabyrinth
         BufferedGraphics myBuffer;
         BufferedGraphicsContext currentContext;
         Timer timer1;
+
         public Playground()
         {
             InitializeComponent();
             timer1 = new Timer();
-            timer1.Interval = 10;            
+            timer1.Interval = 1000 / 60;
             timer1.Tick += new EventHandler(this.OnTimer);
-            zeichne();
+            Start();
             //zeichne_3D();
         }
 
-        public Playground(ref object[] holder)
-        {
-            this.holder = holder;
-        }
-                        
-        Feld[,] FieldMap_2D;
+        //public Playground(ref object[] holder)
+        //{
+        //    //this.holder = holder;
+        //}
+
+        //Feld[,] FieldMap_2D;
         //Feld[, ,] FieldMap_3D;
-        Object[] holder;
+        //Holds the Object on the second line here the Kiste
+        //Object[] holder;
         Player spieler;
 
-        private void zeichne()
-        {            
+        private void RegisterKeyType()
+        {
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.playground_KeyDown);
+        }
+
+        private void DeRegisterKeyType()
+        {
+            this.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.playground_KeyDown);
+        }
+
+        public void End()
+        {
+            DeRegisterKeyType();
+            timer1.Stop();
+            MessageBox.Show("Winning");
+        }
+
+        private void Reset()
+        {
+            Engine.anzTargets = 0;
+            datain = null;
+        }
+
+        private void Start()
+        {
             String Text;
+            RegisterKeyType();
             datain = new Dateileser();
             Size si = new Size(16, 16);
             currentContext = BufferedGraphicsManager.Current;
             myBuffer = currentContext.Allocate(this.CreateGraphics(), this.DisplayRectangle);
 
             //Player karte = new Player("M:\\VRSammel\\OcculusLabyrinth\\OcculusLabyrinth\\VRLabyrinth\\VRLabyrinth\\Resources\\hintergrund.bmp");
-            Bitmap karte = new Bitmap(Resources.hintergrund);            
+            Bitmap karte = new Bitmap(Resources.hintergrund);
             //strMap = new Block(si, karte, 16, 16);
 
             Text = datain.leseein();
@@ -58,11 +84,11 @@ namespace VRLabyrinth
                 if (line.Length - 1 > RowLengh)
                     RowLengh = line.Length - 1;
             }
-                                                
+
             //List As Cache for the Object Holder here for the Kist
             List<Kiste> cacheKisteList = new List<Kiste>();
 
-            FieldMap_2D = new Feld[numLines, RowLengh];
+            Engine.FieldMap_2D = new Feld[numLines, RowLengh];
             for (int y = 0; y < numLines; ++y)
             {
                 int actualRowLengh = lines[y].Length - 1;
@@ -71,28 +97,29 @@ namespace VRLabyrinth
                 {
                     //.#-kBZ
                     if (actualRowLengh <= x || lines[y][x] == '.')
-                        FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
+                        Engine.FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
                     else if (lines[y][x] == '#')
-                        FieldMap_2D[y, x] = new Block(si, karte, 50 + x * 16, 50 + y * 16);
-                    else if (lines[y][x] == 'Z'){
-                        FieldMap_2D[y, x] = new Target(si, karte, 50 + x * 16, 50 + y * 16);
-                        anzTargets++;
+                        Engine.FieldMap_2D[y, x] = new Block(si, karte, 50 + x * 16, 50 + y * 16);
+                    else if (lines[y][x] == 'Z')
+                    {
+                        Engine.FieldMap_2D[y, x] = new Target(si, karte, 50 + x * 16, 50 + y * 16);
+                        Engine.anzTargets++;
                     }
                     else if (lines[y][x] == 'K')
                     {
-                        FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
+                        Engine.FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
                         cacheKisteList.Add(new Kiste(si, karte, 50 + x * 16, 50 + y * 16, x, y));
                     }
                     else if (lines[y][x] == 'B')
                     {
-                        FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
+                        Engine.FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
                         spieler = new Player(x, y);
                     }
                     else if (lines[y][x] == '-')
-                        FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
+                        Engine.FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
                 }
-            }            
-            holder = cacheKisteList.ToArray();
+            }
+            Engine.holder = cacheKisteList.ToArray();
             threadTargetStarter();
             timer1.Start();
         }
@@ -100,12 +127,12 @@ namespace VRLabyrinth
         private void OnTimer(object sender, EventArgs e)
         {
             myBuffer = currentContext.Allocate(this.CreateGraphics(), this.DisplayRectangle);
-            foreach (Feld field in FieldMap_2D)
+            foreach (Feld field in Engine.FieldMap_2D)
             {
                 myBuffer.Graphics.DrawImage(field.getBMap(), field.getStartPoint());
             }
 
-            foreach (Kiste obj in holder)
+            foreach (Kiste obj in Engine.holder)
             {
                 myBuffer.Graphics.DrawImage(obj.getBMap(), obj.getStartPoint());
             }
@@ -160,16 +187,16 @@ namespace VRLabyrinth
         }*/
         #endregion
 
-        protected override void OnPaint (PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
             //base.OnPaint(e);
 
-            foreach (Feld field in FieldMap_2D)
+            foreach (Feld field in Engine.FieldMap_2D)
             {
                 myBuffer.Graphics.DrawImage(field.getBMap(), field.getStartPoint());
             }
 
-            foreach (Kiste obj in holder)
+            foreach (Kiste obj in Engine.holder)
             {
                 myBuffer.Graphics.DrawImage(obj.getBMap(), obj.getStartPoint());
             }
@@ -179,7 +206,7 @@ namespace VRLabyrinth
         }
 
         private void playground_KeyDown(object sender, KeyEventArgs e)
-        {            
+        {
             switch (e.KeyCode)
             {
                 case Keys.W:
@@ -188,8 +215,8 @@ namespace VRLabyrinth
                     //        , FieldMap_2D[spieler.yCoordinate - 2, spieler.xCoordinate]
                     //        , "UP");
 
-                    if (!hidding(FieldMap_2D[spieler.yCoordinate - 1, spieler.xCoordinate]) &&
-                    Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), "UP"))
+                    if (!Engine.hidding(Engine.FieldMap_2D[spieler.yCoordinate - 1, spieler.xCoordinate]) &&
+                    Engine.Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), "UP"))
                         spieler.highAdding();
                     //kistHold.highAdding();
                     break;
@@ -199,8 +226,8 @@ namespace VRLabyrinth
                     //        , FieldMap_2D[spieler.yCoordinate + 2, spieler.xCoordinate]
                     //        , "DOWN");
 
-                    if (!hidding(FieldMap_2D[spieler.yCoordinate + 1, spieler.xCoordinate]) &&
-                    Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), "DOWN"))
+                    if (!Engine.hidding(Engine.FieldMap_2D[spieler.yCoordinate + 1, spieler.xCoordinate]) &&
+                    Engine.Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), "DOWN"))
                         spieler.downAdding();
                     //kistHold.downAdding();
                     break;
@@ -210,8 +237,8 @@ namespace VRLabyrinth
                     //        , FieldMap_2D[spieler.yCoordinate, spieler.xCoordinate - 2]
                     //        , "LEFT");
 
-                    if (!hidding(FieldMap_2D[spieler.yCoordinate, spieler.xCoordinate - 1]) &&
-                    Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), "LEFT"))
+                    if (!Engine.hidding(Engine.FieldMap_2D[spieler.yCoordinate, spieler.xCoordinate - 1]) &&
+                    Engine.Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), "LEFT"))
                         spieler.leftAdding();
                     //kistHold.leftAdding();
                     break;
@@ -221,8 +248,8 @@ namespace VRLabyrinth
                     //        , FieldMap_2D[spieler.yCoordinate, spieler.xCoordinate + 2]
                     //        , "RIGHT");
 
-                    if (!hidding(FieldMap_2D[spieler.yCoordinate, spieler.xCoordinate + 1]) &&
-                        Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), "RIGHT"))
+                    if (!Engine.hidding(Engine.FieldMap_2D[spieler.yCoordinate, spieler.xCoordinate + 1]) &&
+                        Engine.Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), "RIGHT"))
                         spieler.rightAdding();
                     //kistHold.rightAdding();
                     break;
@@ -230,144 +257,145 @@ namespace VRLabyrinth
             base.Refresh();
         }
 
-        private bool shift(Kiste kiste, Feld feld2, string direction)
-        {
-            bool secondIsNotKiste = true;
-            bool returnWert = false;
-            Point targetPoint = kiste.getAlternatePoint();
-            switch (direction)
-            {
-                case "UP":
-                    targetPoint.Y -= 1;
-                    break;
-                case "DOWN":
-                    targetPoint.Y += 1;
-                    break;
-                case "LEFT":
-                    targetPoint.X -= 1;
-                    break;
-                case "RIGHT":
-                    targetPoint.X += 1;
-                    break;
-                default:
-                    throw new Exception("Direction Error");
-            }
-            foreach (Kiste k in holder)
-            {
-                if (targetPoint.Equals(k.getAlternatePoint()))
-                {
-                    secondIsNotKiste = false;
-                }
-            }
-            if (!hidding(feld2) && secondIsNotKiste)
-            {
-                switch (direction)
-                {
-                    case "UP":
-                        kiste.highAdding();
-                        returnWert = true;
-                        break;
-                    case "DOWN":
-                        kiste.downAdding();
-                        returnWert = true;
-                        break;
-                    case "LEFT":
-                        kiste.leftAdding();
-                        returnWert = true;
-                        break;
-                    case "RIGHT":
-                        kiste.rightAdding();
-                        returnWert = true;
-                        break;
-                    default:
-                        throw new Exception("Direction Error");
-                }
-            }
-            return returnWert;
-        }
+        //private bool shift(Kiste kiste, Feld feld2, string direction)
+        //{
+        //    bool secondIsNotKiste = true;
+        //    bool returnWert = false;
+        //    Point targetPoint = feld2.getAlternatePoint();
+        //    //Point targetPoint = kiste.getAlternatePoint();
+        //    //switch (direction)
+        //    //{
+        //    //    case "UP":
+        //    //        targetPoint.Y -= 1;
+        //    //        break;
+        //    //    case "DOWN":
+        //    //        targetPoint.Y += 1;
+        //    //        break;
+        //    //    case "LEFT":
+        //    //        targetPoint.X -= 1;
+        //    //        break;
+        //    //    case "RIGHT":
+        //    //        targetPoint.X += 1;
+        //    //        break;
+        //    //    default:
+        //    //        throw new Exception("Direction Error");
+        //    //}
+        //    foreach (Kiste k in holder)
+        //    {
+        //        if (targetPoint.Equals(k.getAlternatePoint()))
+        //        {
+        //            secondIsNotKiste = false;
+        //        }
+        //    }
+        //    if (!hidding(feld2) && secondIsNotKiste)
+        //    {
+        //        switch (direction)
+        //        {
+        //            case "UP":
+        //                kiste.highAdding();
+        //                returnWert = true;
+        //                break;
+        //            case "DOWN":
+        //                kiste.downAdding();
+        //                returnWert = true;
+        //                break;
+        //            case "LEFT":
+        //                kiste.leftAdding();
+        //                returnWert = true;
+        //                break;
+        //            case "RIGHT":
+        //                kiste.rightAdding();
+        //                returnWert = true;
+        //                break;
+        //            default:
+        //                throw new Exception("Direction Error");
+        //        }
+        //    }
+        //    return returnWert;
+        //}
 
-        private bool Kisthidding(Point PlayerPoint, string direction)
-        {
-            Point targetPoint = PlayerPoint;
-            bool returnWert = true;
-            int xP=0, yP=0;
-            switch (direction)
-            {
-                case "UP":
-                        targetPoint.Y -= 1;
-                        yP = -1;
-                    break;
-                case "DOWN":
-                        targetPoint.Y += 1;
-                        yP = 1;
-                    break;
-                case "LEFT":
-                        targetPoint.X -= 1;
-                        xP = -1;
-                    break;
-                case "RIGHT":
-                        targetPoint.X += 1;
-                        xP = 1;
-                    break;
-                default:
-                    throw new Exception("Direction Error");
-            }
-            //vor jeder bewegung abfragen ob ich gegen kiste stoße wenn ja hidding abfragen und wenn keine dann kiste bewegen
-            foreach (Kiste k in holder)
-            {
-                if (targetPoint.Equals(k.getAlternatePoint()))
-                {
-                    returnWert = shift(k, FieldMap_2D[targetPoint.Y + yP, targetPoint.X + xP], direction);
-                }
-            }
-            return returnWert;
-        }
+        //private bool Kisthidding(Point PlayerPoint, string direction)
+        //{
+        //    Point targetPoint = PlayerPoint;
+        //    bool returnWert = true;
+        //    int xP = 0, yP = 0;
+        //    switch (direction)
+        //    {
+        //        case "UP":
+        //            targetPoint.Y -= 1;
+        //            yP = -1;
+        //            break;
+        //        case "DOWN":
+        //            targetPoint.Y += 1;
+        //            yP = 1;
+        //            break;
+        //        case "LEFT":
+        //            targetPoint.X -= 1;
+        //            xP = -1;
+        //            break;
+        //        case "RIGHT":
+        //            targetPoint.X += 1;
+        //            xP = 1;
+        //            break;
+        //        default:
+        //            throw new Exception("Direction Error");
+        //    }
+        //    //vor jeder bewegung abfragen ob ich gegen kiste stoße wenn ja hidding abfragen und wenn keine dann kiste bewegen
+        //    foreach (Kiste k in holder)
+        //    {
+        //        if (targetPoint.Equals(k.getAlternatePoint()))
+        //        {
+        //            returnWert = shift(k, FieldMap_2D[targetPoint.Y + yP, targetPoint.X + xP], direction);
+        //        }
+        //    }
+        //    return returnWert;
+        //}
 
-        private Boolean hidding(object targetField)
-        {
-            Feld FieldCache = (Feld)targetField;
-            if (FieldCache.block)
-                return true;
-            return false;
-        }
+        //private Boolean hidding(object targetField)
+        //{
+        //    Feld FieldCache = (Feld)targetField;
+        //    if (FieldCache.block)
+        //        return true;
+        //    return false;
+        //}
 
         private void threadTargetStarter()
         {
-            System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ThreadStart(targetErreicht));
+            System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ThreadStart(Engine.targetErreicht));
 
             t.Name = "ZielPruefung";
             t.Start();
         }
 
-        private int anzTargets = 0;
-        
-        private void targetErreicht()
-        {
-            bool zielnichterreicht = true;
-            do
-            {
-                int goalsArrived = anzTargets;
-                foreach (Kiste k in holder)
-                {
-                    Feld testield = FieldMap_2D[k.getAlternatePoint().Y, k.getAlternatePoint().X];
-                    if (FieldMap_2D[k.getAlternatePoint().Y, k.getAlternatePoint().X].GetType().Name == "Target")
-                        goalsArrived--;
-                    //k.getAlternatePoint()
-                }
-                if (goalsArrived == 0)
-                {
-                    MessageBox.Show("Gewonnen", "Winning", MessageBoxButtons.OK);
-                    zielnichterreicht = false; 
-                }
-            }
-            while (zielnichterreicht);
-            //globale goals arrived
-            //anfang bei 0 mit jedem target field +1
-            //ist auf dem feld der kiste ein target feld setze globale -1
-            //immer zur laufzeit überprüfen
-            //wenn cahce wert 0 erreicht sind alle ziele mit kiste belegt dann fertig
-            //im eigenen thread daher eigene classe?
-        }
+        //private int anzTargets = 0;
+
+        //private void targetErreicht()
+        //{
+        //    bool zielnichterreicht = true;
+        //    do
+        //    {
+        //        int goalsArrived = anzTargets;
+        //        foreach (Kiste k in holder)
+        //        {
+        //            Feld testield = FieldMap_2D[k.getAlternatePoint().Y, k.getAlternatePoint().X];
+        //            if (FieldMap_2D[k.getAlternatePoint().Y, k.getAlternatePoint().X].GetType().Name == "Target")
+        //                goalsArrived--;
+        //            //k.getAlternatePoint()
+        //        }
+        //        if (goalsArrived == 0)
+        //        {
+        //            MessageBox.Show("Gewonnen", "Winning", MessageBoxButtons.OK);
+        //            zielnichterreicht = false;
+        //        }
+        //    }
+        //    while (zielnichterreicht);
+        //    //globale goals arrived
+        //    //anfang bei 0 mit jedem target field +1
+        //    //ist auf dem feld der kiste ein target feld setze globale -1
+        //    //immer zur laufzeit überprüfen
+        //    //wenn cahce wert 0 erreicht sind alle ziele mit kiste belegt dann fertig
+        //    //im eigenen thread daher eigene classe?
+        //}
 
         private void Playground_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -375,5 +403,14 @@ namespace VRLabyrinth
             //Application.Exit()
             Environment.Exit(0);
         }
-    }  
+
+        private void herToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (sender.ToString().Equals("PlaceHolder"))
+            {
+                Reset();
+                Start();
+            }
+        }
+    }
 }
