@@ -13,7 +13,6 @@ namespace VRLabyrinth
         public int yCoordinate { get; private set; }
         private Point Postion;
 
-
         public Player()
         {
             initGraphic();

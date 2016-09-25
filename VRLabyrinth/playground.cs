@@ -17,6 +17,7 @@ namespace VRLabyrinth
         BufferedGraphics myBuffer;
         BufferedGraphicsContext currentContext;
         Timer timer1;
+        System.Threading.Thread threadTargetTest;
 
         public Playground()
         {
@@ -51,14 +52,21 @@ namespace VRLabyrinth
 
         public void End()
         {
-            DeRegisterKeyType();
             timer1.Stop();
+            DeRegisterKeyType();
+            Engine.anzTargets = 0;
+            Engine.FieldMap_2D = null;
+            datain = null;
             MessageBox.Show("Winning");
         }
 
         private void Reset()
         {
+            threadTargetTest.Abort();
+            timer1.Stop();
+            DeRegisterKeyType();
             Engine.anzTargets = 0;
+            Engine.FieldMap_2D = null;
             datain = null;
         }
 
@@ -97,9 +105,13 @@ namespace VRLabyrinth
                 {
                     //.#-kBZ
                     if (actualRowLengh <= x || lines[y][x] == '.')
+                    {
                         Engine.FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
+                    }
                     else if (lines[y][x] == '#')
+                    {
                         Engine.FieldMap_2D[y, x] = new Block(si, karte, 50 + x * 16, 50 + y * 16);
+                    }
                     else if (lines[y][x] == 'Z')
                     {
                         Engine.FieldMap_2D[y, x] = new Target(si, karte, 50 + x * 16, 50 + y * 16);
@@ -116,7 +128,9 @@ namespace VRLabyrinth
                         spieler = new Player(x, y);
                     }
                     else if (lines[y][x] == '-')
+                    {
                         Engine.FieldMap_2D[y, x] = new Background(si, karte, 50 + x * 16, 50 + y * 16);
+                    }
                 }
             }
             Engine.holder = cacheKisteList.ToArray();
@@ -255,7 +269,7 @@ namespace VRLabyrinth
                     break;
             }
             base.Refresh();
-        }
+        }        
 
         //private bool shift(Kiste kiste, Feld feld2, string direction)
         //{
@@ -361,10 +375,10 @@ namespace VRLabyrinth
 
         private void threadTargetStarter()
         {
-            System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ThreadStart(Engine.targetErreicht));
+            threadTargetTest = new System.Threading.Thread(new System.Threading.ThreadStart(Engine.targetErreicht));
 
-            t.Name = "ZielPruefung";
-            t.Start();
+            threadTargetTest.Name = "ZielPruefung";
+            threadTargetTest.Start();
         }
 
         //private int anzTargets = 0;

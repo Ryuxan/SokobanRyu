@@ -21,7 +21,7 @@ namespace VRLabyrinth
         //{
         //    this.holder = holder;
         //    this.FieldMap_2D = FieldMap_2D;
-        //}
+        //}  
 
         public static void targetErreicht()
         {
@@ -41,6 +41,7 @@ namespace VRLabyrinth
                 {                    
                     zielnichterreicht = false;
                 }
+                System.Threading.Thread.Sleep(100);
             }
             while (zielnichterreicht);
             if(playground != null)

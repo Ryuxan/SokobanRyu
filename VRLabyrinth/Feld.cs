@@ -25,12 +25,17 @@ namespace VRLabyrinth
 
         public Feld(Size si, Bitmap bm, int xstart, int ystart) : this(si)
         {
-            start = new Point(xstart, ystart);          
+            this.start = new Point(xstart, ystart);          
         }
 
         public Feld(Size si, Bitmap bm, Point punkt) : this(si)
         {
-            start = punkt;
+            this.start = punkt;
+        }
+
+        ~Feld(){
+            this.si = Size.Empty;
+            this.start = Point.Empty;
         }
 
         public abstract Point getStartPoint();
