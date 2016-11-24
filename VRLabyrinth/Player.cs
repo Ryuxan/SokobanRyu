@@ -21,9 +21,7 @@ namespace VRLabyrinth
         public Player(int xCoordinate, int yCoordinate)
             : this()
         {
-            this.xCoordinate = xCoordinate;
-            this.yCoordinate = yCoordinate;
-            Postion = new Point(50 + xCoordinate * 16 +7, 50 + yCoordinate * 16 + 4);
+            setStartPoint(xCoordinate, yCoordinate);
         }
 
         private void initGraphic()
@@ -33,6 +31,13 @@ namespace VRLabyrinth
             //{
             //    g.DrawImage(bm, dest, source, GraphicsUnit.Pixel);
             //}
+        }
+
+        public void setStartPoint(int xCoordinate, int yCoordinate)
+        {
+            this.xCoordinate = xCoordinate;
+            this.yCoordinate = yCoordinate;
+            Postion = new Point(50 + xCoordinate * 16, 50 + yCoordinate * 16);
         }
 
         public Bitmap getBMap()
