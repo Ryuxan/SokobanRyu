@@ -30,7 +30,8 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.herToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tmiRestart = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,17 +48,26 @@
             // menuToolStripMenuItem
             // 
             this.menuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.herToolStripMenuItem});
+            this.tmiRestart,
+            this.closeToolStripMenuItem});
             this.menuToolStripMenuItem.Name = "menuToolStripMenuItem";
             this.menuToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
             this.menuToolStripMenuItem.Text = "Menu";
             // 
-            // herToolStripMenuItem
+            // tmiRestart
             // 
-            this.herToolStripMenuItem.Name = "herToolStripMenuItem";
-            this.herToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.herToolStripMenuItem.Text = "PlaceHolder";
-            this.herToolStripMenuItem.Click += new System.EventHandler(this.herToolStripMenuItem_Click);
+            this.tmiRestart.Name = "tmiRestart";
+            this.tmiRestart.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.tmiRestart.ShowShortcutKeys = false;
+            this.tmiRestart.Size = new System.Drawing.Size(152, 22);
+            this.tmiRestart.Text = "Restart";
+            this.tmiRestart.Click += new System.EventHandler(this.herToolStripMenuItem_Click);
+            // 
+            // closeToolStripMenuItem
+            // 
+            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem.Text = "Close";
             // 
             // Playground
             // 
@@ -81,7 +91,8 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem menuToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem herToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tmiRestart;
+        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
 
 
 

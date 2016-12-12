@@ -25,6 +25,8 @@ namespace VRLabyrinth
         private static System.Threading.Thread threadTargetTest;
         //private Dateileser datain;
 
+        public static int moves = 0;
+        public static int shifts = 0;
 
         //public Engine(ref object[] holder, ref Feld[,] FieldMap_2D)
         //{
@@ -158,6 +160,7 @@ namespace VRLabyrinth
                     default:
                         throw new Exception("Direction Error");
                 }
+                shifts++;
             }
             return returnWert;
         }
@@ -185,25 +188,29 @@ namespace VRLabyrinth
                     if (!Engine.hidding(Engine.FieldMap_2D[spieler.yCoordinate - 1, spieler.xCoordinate]) &&
                     Engine.Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), Direction.Up))
                         spieler.highAdding();
+                    moves++;
                     break;
                 case System.Windows.Forms.Keys.S:
                     if (!Engine.hidding(Engine.FieldMap_2D[spieler.yCoordinate + 1, spieler.xCoordinate]) &&
                     Engine.Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), Direction.Down))
                         spieler.downAdding();
+                    moves++;
                     break;
                 case System.Windows.Forms.Keys.A:
                     if (!Engine.hidding(Engine.FieldMap_2D[spieler.yCoordinate, spieler.xCoordinate - 1]) &&
                     Engine.Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), Direction.Left))
                         spieler.leftAdding();
+                    moves++;
                     break;
                 case System.Windows.Forms.Keys.D:
                     if (!Engine.hidding(Engine.FieldMap_2D[spieler.yCoordinate, spieler.xCoordinate + 1]) &&
                         Engine.Kisthidding(new Point(spieler.xCoordinate, spieler.yCoordinate), Direction.Right))
                         spieler.rightAdding();
+                    moves++;
                     break;
-                case System.Windows.Forms.Keys.F5:
-                    Restart();
-                    break;
+                //case System.Windows.Forms.Keys.F5:
+                //    Restart();
+                //    break;
             }
         }
 
@@ -216,17 +223,20 @@ namespace VRLabyrinth
         public static void Start()
         {
             String Text;
+
+            moves = 0;
+            shifts = 0;
             Playground.RegisterKeyType();
             Dateileser datain = new Dateileser();
             GraphicEngine.currentContext = BufferedGraphicsManager.Current;
-            GraphicEngine.myBuffer = GraphicEngine.currentContext.Allocate(Playground.CreateGraphics(), Playground.DisplayRectangle);            
-            
+            GraphicEngine.myBuffer = GraphicEngine.currentContext.Allocate(Playground.CreateGraphics(), Playground.DisplayRectangle);
+
             Text = datain.leseein();
             //GraphicEngine.initiateMap(Text, ref Playground._spieler);
             GraphicEngine.initiateMap(Text, ref Spieler);
 
             Engine.threadTargetStarter();
-            Playground.timer1.Start();            
+            Playground.timer1.Start();
         }
 
         private static void Reset()
@@ -238,7 +248,7 @@ namespace VRLabyrinth
             Engine.FieldMap_2D = null;
         }
 
-        private static void End()
+        public static void End()
         {
             Playground.timer1.Stop();
             Playground.UnRegisterKeyType();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using VRLabyrinth.Properties;
 
 namespace VRLabyrinth
@@ -68,6 +69,9 @@ namespace VRLabyrinth
 
         public static void paint(Playground _actPlayground)
         {
+            Font drawFont = new Font("Arial", 13);
+            SolidBrush drawBrush = new SolidBrush(Color.Red);
+
             try
             {
                 myBuffer = currentContext.Allocate(_actPlayground.CreateGraphics(), _actPlayground.DisplayRectangle);
@@ -82,6 +86,11 @@ namespace VRLabyrinth
                 }
 
                 myBuffer.Graphics.DrawImage(_actPlayground._spieler.getBMap(), _actPlayground._spieler.getActPoint());
+
+                //moves and shifts
+                myBuffer.Graphics.DrawString("Moves " + Engine.moves, drawFont, drawBrush, new PointF(5, 30));
+                myBuffer.Graphics.DrawString("Shifts " + Engine.shifts, drawFont, drawBrush, new PointF(150, 30));
+
                 myBuffer.Render();
             }
             catch (NullReferenceException ex)
@@ -137,4 +146,82 @@ namespace VRLabyrinth
         }*/
         #endregion
     }
+
+    /// <span class="code-SummaryComment"><summary></span>
+/// Selected Win API Function Calls
+/// <span class="code-SummaryComment"></summary></span>
+
+public class WinApi
+{
+    [DllImport("user32.dll", EntryPoint = "GetSystemMetrics")]
+    public static extern int GetSystemMetrics(int which);
+
+    [DllImport("user32.dll")]
+    public static extern void
+        SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter,
+                     int X, int Y, int width, int height, uint flags);        
+
+    private const int SM_CXSCREEN = 0;
+    private const int SM_CYSCREEN = 1;
+    private static IntPtr HWND_TOP = IntPtr.Zero;
+    private const int SWP_SHOWWINDOW = 64; // 0×0040
+
+    public static int ScreenX
+    {
+        get { return GetSystemMetrics(SM_CXSCREEN);}
+    }
+
+    public static int ScreenY
+    {
+        get { return GetSystemMetrics(SM_CYSCREEN);}
+    }
+
+    public static void SetWinFullScreen(IntPtr hwnd)
+    {
+        SetWindowPos(hwnd, HWND_TOP, 0, 0, ScreenX, ScreenY, SWP_SHOWWINDOW);
+    }
+}
+
+/// <span class="code-SummaryComment"><summary></span>
+/// Class used to preserve / restore / maximize state of the form
+/// <span class="code-SummaryComment"></summary></span>
+public class FormState
+{
+    private System.Windows.Forms.FormWindowState winState;
+    private System.Windows.Forms.FormBorderStyle brdStyle;
+    private bool topMost;
+    private Rectangle bounds;
+
+    private bool IsMaximized = false;
+
+    public void Maximize(System.Windows.Forms.Form targetForm)
+    {
+        if (!IsMaximized)
+        {
+            IsMaximized = true;
+            Save(targetForm);
+            targetForm.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            targetForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            targetForm.TopMost = true;
+            WinApi.SetWinFullScreen(targetForm.Handle);
+        }
+    }
+
+    public void Save(System.Windows.Forms.Form targetForm)
+    {
+        winState = targetForm.WindowState;
+        brdStyle = targetForm.FormBorderStyle;
+        topMost = targetForm.TopMost;
+        bounds = targetForm.Bounds;
+    }
+
+    public void Restore(System.Windows.Forms.Form targetForm)
+    {
+        targetForm.WindowState = winState;
+        targetForm.FormBorderStyle = brdStyle;
+        targetForm.TopMost = topMost;
+        targetForm.Bounds = bounds;
+        IsMaximized = false;
+    }
+}
 }

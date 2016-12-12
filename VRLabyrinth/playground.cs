@@ -74,6 +74,7 @@ namespace VRLabyrinth
         private void OnTimer(object sender, EventArgs e)
         {
             GraphicEngine.paint(this);
+            //GraphicEngine.paint(panel1);
         }
 
         //protected override void OnPaint(PaintEventArgs e)
@@ -124,9 +125,10 @@ namespace VRLabyrinth
             //        break;
             //}
             #endregion
+            System.Diagnostics.Debug.WriteLine("KeyDown: " + e.KeyCode);
             Engine.KeyboardInput(e.KeyCode);
             //base.Refresh();
-        }     
+        }
 
         private void Playground_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -136,9 +138,15 @@ namespace VRLabyrinth
 
         private void herToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (sender.ToString().Equals("PlaceHolder"))
+            if (sender.ToString().Equals("Restart"))
             {
                 Engine.Restart();
+            }
+
+            if (sender.ToString().Equals("Close"))
+            {
+                Engine.End();
+                this.Close();
             }
         }
     }
