@@ -14,6 +14,8 @@ namespace VRLabyrinth
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Playground p = new Playground();
+            Engine.setPlayground(p);
+            Engine.Start();
             //do anything
             p.BringToFront();
             p.Focus();

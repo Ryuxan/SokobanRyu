@@ -25,15 +25,21 @@ namespace VRLabyrinth
 
         public Feld(Size si, Bitmap bm, int xstart, int ystart) : this(si)
         {
-            start = new Point(xstart, ystart);          
+            this.start = new Point(xstart, ystart);          
         }
 
         public Feld(Size si, Bitmap bm, Point punkt) : this(si)
         {
-            start = punkt;
+            this.start = punkt;
+        }
+
+        ~Feld(){
+            this.si = Size.Empty;
+            this.start = Point.Empty;
         }
 
         public abstract Point getStartPoint();
+        public abstract Point getAlternatePoint();        
 
         public abstract Bitmap getBMap();  
 
@@ -59,6 +65,11 @@ namespace VRLabyrinth
         public override Point getStartPoint()
         {
             return start;
+        }
+
+        public override Point getAlternatePoint()
+        {
+            return new Point(-1, -1);
         }
 
         public override Bitmap getBMap()
@@ -98,6 +109,11 @@ namespace VRLabyrinth
             return start;
         }
 
+        public override Point getAlternatePoint()
+        {
+            return new Point(-1, -1);
+        }
+
         public override Bitmap getBMap()
         {
             return bmap;
@@ -132,6 +148,11 @@ namespace VRLabyrinth
         public override Point getStartPoint()
         {
             return start;
+        }
+
+        public override Point getAlternatePoint()
+        {
+            return new Point(-1, -1);
         }
 
         public override Bitmap getBMap()
@@ -216,7 +237,7 @@ namespace VRLabyrinth
             return start;
         }
 
-        public Point getAlternatePoint()
+        public override Point getAlternatePoint()
         {
             return new Point(arrayX, arrayY);
         }

@@ -77,6 +77,7 @@
     <Compile Include="Dateileser.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Feld.cs" />
+    <Compile Include="GraphicEngine.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="playground.cs">
       <SubType>Form</SubType>
@@ -93,13 +94,17 @@
     <Compile Include="Starter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Maps\Map4.txt" />
     <Content Include="Maps\Map3.txt" />
     <Content Include="Maps\Map2.txt" />
     <Content Include="Maps\Map1.txt" />
@@ -122,7 +127,6 @@
   <ItemGroup>
     <None Include="Klassen.cd" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir $(TargetDir)\Maps
